@@ -1,42 +1,53 @@
 import React, { useState } from 'react';
 import './App.css';
-import WireframeLayout from './components/WireframeLayout';
-import ClickUpWireframe from './wireframes/ClickUpWireframe';
-import MuseOperatorWireframe from './wireframes/MuseOperatorWireframe';
-import KnowledgeFactoryWireframe from './wireframes/KnowledgeFactoryWireframe';
-import LandingWireframe from './wireframes/LandingWireframe';
+import IntegratedApp from './IntegratedApp';
+import DemoApp from './DemoApp';
+import WalkthroughSelector from './components/WalkthroughSelector';
 
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'clickup' | 'knowledge'>('landing');
-  const [showMusePanel, setShowMusePanel] = useState(false);
+  const [mode, setMode] = useState<'demo' | 'integrated' | 'walkthroughs'>('walkthroughs');
 
   return (
-    <WireframeLayout>
-      <div className="flex h-screen bg-gray-50">
-        {/* Main Content Area */}
-        <div className={`flex-1 transition-all duration-300 ${showMusePanel ? 'mr-96' : ''}`}>
-          {currentView === 'landing' && (
-            <LandingWireframe 
-              onNavigate={setCurrentView}
-              onToggleMuse={() => setShowMusePanel(!showMusePanel)}
-            />
-          )}
-          {currentView === 'clickup' && (
-            <ClickUpWireframe onToggleMuse={() => setShowMusePanel(!showMusePanel)} />
-          )}
-          {currentView === 'knowledge' && (
-            <KnowledgeFactoryWireframe onBack={() => setCurrentView('landing')} />
-          )}
-        </div>
-
-        {/* Muse Operator Side Panel */}
-        {showMusePanel && (
-          <div className="fixed right-0 top-0 h-full w-96 border-l-4 border-gray-800 bg-white shadow-2xl">
-            <MuseOperatorWireframe onClose={() => setShowMusePanel(false)} />
-          </div>
-        )}
+    <div className="App">
+      {/* Mode Selector */}
+      <div className="fixed top-4 right-4 z-50 bg-white rounded-lg shadow-lg p-2 flex space-x-2">
+        <button
+          onClick={() => setMode('walkthroughs')}
+          className={`px-4 py-2 rounded transition-colors ${
+            mode === 'walkthroughs' 
+              ? 'bg-blue-600 text-white' 
+              : 'bg-gray-100 hover:bg-gray-200'
+          }`}
+        >
+          PRD Walkthroughs
+        </button>
+        <button
+          onClick={() => setMode('demo')}
+          className={`px-4 py-2 rounded transition-colors ${
+            mode === 'demo' 
+              ? 'bg-blue-600 text-white' 
+              : 'bg-gray-100 hover:bg-gray-200'
+          }`}
+        >
+          Interactive Demo
+        </button>
+        <button
+          onClick={() => setMode('integrated')}
+          className={`px-4 py-2 rounded transition-colors ${
+            mode === 'integrated' 
+              ? 'bg-blue-600 text-white' 
+              : 'bg-gray-100 hover:bg-gray-200'
+          }`}
+        >
+          Integrated View
+        </button>
       </div>
-    </WireframeLayout>
+
+      {/* Content */}
+      {mode === 'walkthroughs' && <WalkthroughSelector />}
+      {mode === 'demo' && <DemoApp />}
+      {mode === 'integrated' && <IntegratedApp />}
+    </div>
   );
 }
 

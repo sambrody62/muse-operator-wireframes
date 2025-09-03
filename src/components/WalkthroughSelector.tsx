@@ -31,16 +31,18 @@ const WalkthroughSelector: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
       <div className="max-w-7xl mx-auto relative">
-        {/* Header (bottom-center overlay, lower on screen) */}
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 text-center z-50 w-full px-4 pointer-events-none">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Nucleus PRD UX walkthrough
-          </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Interactive demonstrations of all user stories from the Product Requirements Document.
-            Select an epic below to explore the walkthroughs for each user story.
-          </p>
-        </div>
+        {/* Header (bottom-center) — show only on main PRD selector screen */}
+        {!selectedCategory && !selectedWalkthrough && (
+          <div className="fixed bottom-20 left-1/2 -translate-x-1/2 text-center z-50 w-full px-4 pointer-events-none">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Nucleus PRD UX walkthrough
+            </h1>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Interactive demonstrations of all user stories from the Product Requirements Document.
+              Select an epic below to explore the walkthroughs for each user story.
+            </p>
+          </div>
+        )}
 
         {/* Category Grid */}
         {!selectedCategory && (

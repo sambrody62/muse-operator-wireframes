@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "env": {
+    "CI": "false"
+  },
   "builds": [
     { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "build" } }
   ],
@@ -7,4 +10,3 @@
     { "src": "/(.*)", "dest": "/" }
   ]
 }
-

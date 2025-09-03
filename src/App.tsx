@@ -9,38 +9,40 @@ function App() {
 
   return (
     <div className="App">
-      {/* Mode Selector */}
-      <div className="fixed top-4 right-4 z-50 bg-white rounded-lg shadow-lg p-2 flex space-x-2">
-        <button
-          onClick={() => setMode('walkthroughs')}
-          className={`px-4 py-2 rounded transition-colors ${
-            mode === 'walkthroughs' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-100 hover:bg-gray-200'
-          }`}
-        >
-          PRD Walkthroughs
-        </button>
-        <button
-          onClick={() => setMode('demo')}
-          className={`px-4 py-2 rounded transition-colors ${
-            mode === 'demo' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-100 hover:bg-gray-200'
-          }`}
-        >
-          Interactive Demo
-        </button>
-        <button
-          onClick={() => setMode('integrated')}
-          className={`px-4 py-2 rounded transition-colors ${
-            mode === 'integrated' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-100 hover:bg-gray-200'
-          }`}
-        >
-          Integrated View
-        </button>
+      {/* Mode Selector - floating (fixed), centered at top */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setMode('walkthroughs')}
+            className={`px-4 py-2 rounded transition-colors border ${
+              mode === 'walkthroughs' 
+                ? 'bg-blue-600 text-white border-blue-700' 
+                : 'bg-transparent text-gray-700 hover:bg-gray-200/60 border-gray-300'
+            }`}
+          >
+            PRD Walkthroughs
+          </button>
+          <button
+            onClick={() => setMode('demo')}
+            className={`px-4 py-2 rounded transition-colors border ${
+              mode === 'demo' 
+                ? 'bg-blue-600 text-white border-blue-700' 
+                : 'bg-transparent text-gray-700 hover:bg-gray-200/60 border-gray-300'
+            }`}
+          >
+            Interactive Demo
+          </button>
+          <button
+            onClick={() => setMode('integrated')}
+            className={`px-4 py-2 rounded transition-colors border ${
+              mode === 'integrated' 
+                ? 'bg-blue-600 text-white border-blue-700' 
+                : 'bg-transparent text-gray-700 hover:bg-gray-200/60 border-gray-300'
+            }`}
+          >
+            Integrated View
+          </button>
+        </div>
       </div>
 
       {/* Content */}

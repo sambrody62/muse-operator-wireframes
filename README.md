@@ -110,18 +110,13 @@ Complete walkthrough definitions aligned with PRD.
 
 ### Epic D: Inter-Agent Collaboration
 - **D1**: Agent Consults - Agents request help from specialists
-- **D2**: Handoffs - Seamless task transfers between agents
+- ~~D2: Handoffs - Seamless task transfers between agents~~ (removed; single-owner model with Traffic Cop routing)
 - **D3**: Parallel Processing - Multiple agents working simultaneously
 
-### Epic E: Operator UI
-- **E1**: Multi-Job Management - Handle multiple active jobs
-- **E2**: Real-time Updates - Live progress indicators
-- **E3**: Quick Actions - Efficient operator controls
-
-### Epic F: Security & Audit
-- **F1**: Data Isolation - Client data separation
-- **F2**: Audit Trail - Complete activity logging
-- **F3**: Permission Controls - Role-based access
+### Epic E: Security & Audit
+- **E1**: Data Isolation - Client data separation
+- **E2**: Audit Trail - Complete activity logging
+- **E3**: Permission Controls - Role-based access
 
 ## 🎨 Visual Features
 

@@ -298,7 +298,7 @@ const DemoClickUpPage: React.FC<DemoClickUpPageProps> = ({ updates = [] }) => {
               case 'subtask-1':
               case 'subtask-2':
               case 'subtask-3':
-                setSubtasks(prev => [...prev, update.value]);
+                // Do not display or store subtasks in interactive demo
                 break;
               case 'document':
                 // Add a new document with the correct agent attribution
@@ -386,17 +386,7 @@ const DemoClickUpPage: React.FC<DemoClickUpPageProps> = ({ updates = [] }) => {
               <div className="p-2 bg-blue-50 rounded">
                 <span className="text-sm text-blue-600 font-medium">Social Media Strategy Launch</span>
               </div>
-              {subtasks.map((subtask, index) => (
-                <div key={index} className={`p-2 hover:bg-gray-100 rounded animate-slide-in ${getFieldClass(`subtask-${index + 1}`)}`}>
-                  <span className="text-sm text-gray-600 flex items-center gap-2">
-                    <CheckCircle2 className="w-3 h-3" />
-                    {subtask}
-                  </span>
-                </div>
-              ))}
-              <div className="p-2 hover:bg-gray-100 rounded cursor-pointer">
-                <span className="text-sm text-gray-600">+ Add Subtask</span>
-              </div>
+              {/* Subtasks hidden in sidebar for interactive demo */}
             </div>
           </div>
         </div>
@@ -466,19 +456,8 @@ const DemoClickUpPage: React.FC<DemoClickUpPageProps> = ({ updates = [] }) => {
           </div>
 
           {/* Subtasks Progress */}
-          {subtasks.length > 0 && (
-            <div id="subtasks-section" className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Task Progress</h3>
-              <div className="space-y-2">
-                {subtasks.map((task, index) => (
-                  <div key={index} className="flex items-center text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-green-500 mr-2" />
-                    <span className="text-gray-700">{task}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Subtasks Progress hidden, keep anchor for scrolling */}
+          <div id="subtasks-section" className="hidden" />
 
           {/* Task Details */}
           <div className="space-y-4 mb-6">

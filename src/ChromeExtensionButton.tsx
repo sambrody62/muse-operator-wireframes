@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface ChromeExtensionButtonProps {
   onClick: () => void;
@@ -9,15 +9,7 @@ interface ChromeExtensionButtonProps {
 const ChromeExtensionButton: React.FC<ChromeExtensionButtonProps> = ({ onClick, isActive }) => {
   return (
     <div className="fixed top-4 right-4 z-50">
-      {/* Instruction Text with Arrow */}
-      {!isActive && (
-        <div className="absolute right-full mr-4 top-1/2 transform -translate-y-1/2 flex items-center animate-pulse">
-          <span className="text-purple-600 font-semibold text-lg whitespace-nowrap mr-2">
-            Click the extension to start
-          </span>
-          <ArrowRight className="w-5 h-5 text-purple-600" />
-        </div>
-      )}
+      {/* Instruction text removed; button pulses until clicked */}
       
       <button
         onClick={onClick}
@@ -56,18 +48,11 @@ const ChromeExtensionButton: React.FC<ChromeExtensionButtonProps> = ({ onClick, 
         
         {/* Active state glow */}
         {isActive && (
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 blur-lg opacity-50 -z-10 animate-pulse"></div>
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 blur-lg opacity-40 -z-10"></div>
         )}
       </button>
       
-      {/* Tooltip */}
-      <div className={`
-        absolute top-full right-0 mt-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg
-        transition-opacity duration-200 pointer-events-none whitespace-nowrap
-        ${isActive ? 'opacity-0' : 'opacity-0 hover:opacity-100'}
-      `}>
-        Launch Muse AI Assistant
-      </div>
+      {/* Tooltip removed */}
     </div>
   );
 };

@@ -8,8 +8,7 @@ const epicIcons: { [key: string]: React.ReactNode } = {
   'epic-b': <MessageSquare className="w-6 h-6" />,
   'epic-c': <Zap className="w-6 h-6" />,
   'epic-d': <Users className="w-6 h-6" />,
-  'epic-e': <Grid className="w-6 h-6" />,
-  'epic-f': <Shield className="w-6 h-6" />
+  'epic-e': <Shield className="w-6 h-6" />
 };
 
 const WalkthroughSelector: React.FC = () => {
@@ -31,11 +30,11 @@ const WalkthroughSelector: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Muse V1 PRD Walkthroughs
+      <div className="max-w-7xl mx-auto relative">
+        {/* Header (bottom-center overlay, lower on screen) */}
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 text-center z-50 w-full px-4 pointer-events-none">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Nucleus PRD UX walkthrough
           </h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Interactive demonstrations of all user stories from the Product Requirements Document.
@@ -45,7 +44,7 @@ const WalkthroughSelector: React.FC = () => {
 
         {/* Category Grid */}
         {!selectedCategory && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="mt-[10vh] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {walkthroughCategories.map(category => {
               const stats = getCompletionStats(category.id);
               const isComplete = stats.completed === stats.total && stats.total > 0;
@@ -197,54 +196,7 @@ const WalkthroughSelector: React.FC = () => {
           </div>
         )}
 
-        {/* Overall Progress */}
-        <div className="mt-12 bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Overall Progress</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {walkthroughCategories.map(category => {
-              const stats = getCompletionStats(category.id);
-              const percentage = (stats.completed / Math.max(stats.total, 1)) * 100;
-              
-              return (
-                <div key={category.id} className="text-center">
-                  <div className="relative w-20 h-20 mx-auto mb-2">
-                    <svg className="w-20 h-20 transform -rotate-90">
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="36"
-                        stroke="#e5e7eb"
-                        strokeWidth="8"
-                        fill="none"
-                      />
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="36"
-                        stroke="url(#gradient)"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeDasharray={`${2 * Math.PI * 36}`}
-                        strokeDashoffset={`${2 * Math.PI * 36 * (1 - percentage / 100)}`}
-                        strokeLinecap="round"
-                      />
-                      <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#3b82f6" />
-                          <stop offset="100%" stopColor="#8b5cf6" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-sm font-bold">{Math.round(percentage)}%</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-600">{category.name.split(' ')[0]}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* Overall Progress removed */}
       </div>
     </div>
   );

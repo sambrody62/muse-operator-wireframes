@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Info, ChevronRight } from 'lucide-react';
+import { X, Info, ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface DemoExplainerBubbleProps {
   title: string;
@@ -8,6 +8,8 @@ interface DemoExplainerBubbleProps {
   totalSteps: number;
   isVisible: boolean;
   onClose?: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
 const DemoExplainerBubble: React.FC<DemoExplainerBubbleProps> = ({
@@ -16,7 +18,9 @@ const DemoExplainerBubble: React.FC<DemoExplainerBubbleProps> = ({
   step,
   totalSteps,
   isVisible,
-  onClose
+  onClose,
+  onNext,
+  onPrev
 }) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [show, setShow] = useState(false);
@@ -82,6 +86,37 @@ const DemoExplainerBubble: React.FC<DemoExplainerBubbleProps> = ({
               <p className="text-sm leading-relaxed opacity-95">
                 {description}
               </p>
+            </div>
+
+            {/* Navigation Controls */}
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                onClick={onPrev}
+                disabled={step <= 1}
+                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all ${
+                  step <= 1
+                    ? 'border-white/30 text-white/40 cursor-not-allowed'
+                    : 'border-white/70 hover:bg-white/10 text-white'
+                }`}
+                title="Previous"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="bg-white/15 px-3 py-1 rounded-full text-xs font-medium">
+                {step} / {totalSteps}
+              </div>
+              <button
+                onClick={onNext}
+                disabled={step >= totalSteps}
+                className={`flex items-center justify-center w-10 h-10 rounded-full border transition-all ${
+                  step >= totalSteps
+                    ? 'border-white/30 text-white/40 cursor-not-allowed'
+                    : 'border-white/70 hover:bg-white/10 text-white'
+                }`}
+                title="Next"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
           </>
         ) : (

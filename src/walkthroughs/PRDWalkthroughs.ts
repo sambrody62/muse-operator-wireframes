@@ -446,11 +446,20 @@ export const epicB_Walkthroughs: UserStoryWalkthrough[] = [
     acceptance: 'Messages get sequential numbers, appear live within a second, duplicates rejected',
     steps: [
       {
+        id: 'b1-0',
+        title: 'Activate Nucleus Extension',
+        description: 'Click the Nucleus extension icon in your Chrome toolbar to open the operator panel',
+        highlight: 'chrome-extension',
+        pointer: { x: 95, y: 5 },
+        action: 'open-muse'
+      },
+      {
         id: 'b1-1',
         title: 'Start Conversation',
         description: 'You send a message to the agents about FinanceFlow\'s annual report. The message gets assigned a sequential ID',
         highlight: 'message-input',
-        pointer: { x: 50, y: 85 },
+        // Point directly to the right-side panel input
+        pointer: { x: 92, y: 92 },
         action: 'type-message',
         data: {
           message: 'I need help creating content for FinanceFlow\'s annual report',
@@ -506,6 +515,14 @@ export const epicB_Walkthroughs: UserStoryWalkthrough[] = [
     story: 'As an Operator, I want agents to recall prior conversation context so they don\'t repeat questions.',
     acceptance: 'Job starts with persona, pinned memory, last 50 messages within 200ms for 95% of jobs',
     steps: [
+      {
+        id: 'b2-0',
+        title: 'Activate Nucleus Extension',
+        description: 'Click the Nucleus extension icon in your Chrome toolbar to open the operator panel',
+        highlight: 'chrome-extension',
+        pointer: { x: 95, y: 5 },
+        action: 'open-muse'
+      },
       {
         id: 'b2-1',
         title: 'Continue Previous Discussion',
@@ -567,6 +584,14 @@ export const epicB_Walkthroughs: UserStoryWalkthrough[] = [
     story: 'As an Operator, I want long conversations summarized so agents keep focus.',
     acceptance: 'Auto-summarize at thresholds (50 msgs/6k tokens/15 min), mask sensitive data, display summary',
     steps: [
+      {
+        id: 'b3-0',
+        title: 'Activate Nucleus Extension',
+        description: 'Click the Nucleus extension icon in your Chrome toolbar to open the operator panel',
+        highlight: 'chrome-extension',
+        pointer: { x: 95, y: 5 },
+        action: 'open-muse'
+      },
       {
         id: 'b3-1',
         title: 'Long Conversation Detected',
@@ -637,8 +662,8 @@ export const epicC_Walkthroughs: UserStoryWalkthrough[] = [
     steps: [
       {
         id: 'c1-1',
-        title: 'Open Muse Side Panel',
-        description: 'Working on CloudTech\'s product launch. Open Muse panel - it docks to the right side of your browser',
+        title: 'Open Nucleus Side Panel',
+        description: 'Working on CloudTech\'s product launch. Open Nucleus panel — it docks to the right side of your browser',
         highlight: 'chrome-extension',
         action: 'open-side-panel',
         data: {
@@ -648,42 +673,39 @@ export const epicC_Walkthroughs: UserStoryWalkthrough[] = [
         }
       },
       {
-        id: 'c1-2',
-        title: 'Start Job in First Tab',
-        description: 'In ClickUp tab, create job: "Product launch assets for CloudTech AI Assistant v2.0"',
-        highlight: 'side-panel-content',
-        action: 'create-job-panel',
-        data: {
-          tab: 'ClickUp',
-          job: 'Product launch assets',
-          agents_working: ['Scout', 'Muse']
-        }
+        id: 'c1-3a',
+        title: 'Agent Example — Scout',
+        description: 'Each agent glows when posting; bubbles are color‑coded with icons.',
+        action: 'show-agent-example',
+        data: { agent: 'Scout', content: 'Found 3 competitor launches worth referencing.' }
       },
       {
-        id: 'c1-3',
-        title: 'Routing Decision Logged',
-        description: 'Decision logged: "Echo selected because task=copy and Echo has capacity (2/10 jobs)"',
-        highlight: 'routing-log',
-        action: 'show-routing-decision',
-        data: {
-          policy_used: 'capability_match_with_load_balance',
-          primary_agent: 'Echo',
-          reason: 'Highest capability score (0.95) + available capacity',
-          secondary_agent: 'Muse',
-          log_id: 'route_2024_042'
-        }
+        id: 'c1-3b',
+        title: 'Agent Example — Muse',
+        description: 'Each agent glows when posting; bubbles are color‑coded with icons.',
+        action: 'show-agent-example',
+        data: { agent: 'Muse', content: 'Here are two concept directions to explore next.' }
       },
       {
-        id: 'c1-4',
-        title: 'Job Completes Across Tabs',
-        description: 'While researching, see real-time update in panel: "Echo completed launch announcement draft"',
-        highlight: 'persistent-notification',
-        action: 'show-completion',
-        data: {
-          notification: 'Job complete!',
-          available_in: 'All open tabs',
-          deliverables_ready: true
-        }
+        id: 'c1-3c',
+        title: 'Agent Example — Echo',
+        description: 'Each agent glows when posting; bubbles are color‑coded with icons.',
+        action: 'show-agent-example',
+        data: { agent: 'Echo', content: 'Drafted the launch announcement headline + lead.' }
+      },
+      {
+        id: 'c1-3d',
+        title: 'Agent Example — Atlas',
+        description: 'Each agent glows when posting; bubbles are color‑coded with icons.',
+        action: 'show-agent-example',
+        data: { agent: 'Atlas', content: 'QA check passed: tone, claims, brand terms.' }
+      },
+      {
+        id: 'c1-3e',
+        title: 'Agent Example — Beacon',
+        description: 'Each agent glows when posting; bubbles are color‑coded with icons.',
+        action: 'show-agent-example',
+        data: { agent: 'Beacon', content: 'Localized the announcement for ES and DE.' }
       }
     ]
   },
@@ -693,6 +715,18 @@ export const epicC_Walkthroughs: UserStoryWalkthrough[] = [
     story: 'As an Operator, I want the system to stay stable under load.',
     acceptance: 'Enforce max concurrent jobs per agent, token/time/cost limits with clear errors',
     steps: [
+      {
+        id: 'c2-0',
+        title: 'Open Nucleus Side Panel',
+        description: 'Click the Nucleus extension icon to open the operator panel for live system updates',
+        highlight: 'chrome-extension',
+        action: 'open-side-panel',
+        data: {
+          panel_width: '400px',
+          position: 'right',
+          client: 'SportsBrand'
+        }
+      },
       {
         id: 'c2-1',
         title: 'High Load Detected',
@@ -771,6 +805,13 @@ export const epicD_Walkthroughs: UserStoryWalkthrough[] = [
     acceptance: 'Consult provides answer within 2s for 95% cases, logs who/what/why, max chain depth 3',
     steps: [
       {
+        id: 'd1-0',
+        title: 'Open Nucleus Side Panel',
+        description: 'Click the Nucleus extension icon to open the operator panel',
+        highlight: 'chrome-extension',
+        action: 'open-side-panel'
+      },
+      {
         id: 'd1-1',
         title: 'Muse Needs Research Help',
         description: 'Muse is creating content for TechCorp but needs market data. Decides to consult Scout',
@@ -826,80 +867,25 @@ export const epicD_Walkthroughs: UserStoryWalkthrough[] = [
       }
     ]
   },
-  {
-    id: 'd2-delegate-subtask',
-    epic: 'Inter-Agent Collaboration',
-    story: 'As an agent, I want to hand off a piece of work so that another agent becomes the owner of it.',
-    acceptance: 'Ownership transferred, parent waits/continues per policy, handoff recorded with details',
-    steps: [
-      {
-        id: 'd2-1',
-        title: 'Echo Drafts Copy',
-        description: 'Echo creates marketing copy for LuxuryBrand but needs Muse to review brand alignment',
-        highlight: 'agent-echo',
-        action: 'show-handoff-need',
-        data: {
-          current_owner: 'Echo',
-          draft_complete: true,
-          needs: 'Creative brand alignment review',
-          client: 'LuxuryBrand'
-        }
-      },
-      {
-        id: 'd2-2',
-        title: 'Delegate to Muse',
-        description: 'Echo delegates: "Please review and elevate brand voice for luxury positioning"',
-        highlight: 'handoff-arrow',
-        action: 'delegate-task',
-        data: {
-          from: 'Echo',
-          to: 'Muse',
-          task_delegated: 'Brand voice review and enhancement',
-          ownership_transfer: true,
-          parent_waits: true
-        }
-      },
-      {
-        id: 'd2-3',
-        title: 'Muse Takes Ownership',
-        description: 'Muse becomes owner, elevates copy: "Discover timepieces where Swiss heritage meets contemporary elegance"',
-        highlight: 'ownership-transfer',
-        action: 'show-ownership-change',
-        data: {
-          new_owner: 'Muse',
-          previous_owner: 'Echo',
-          enhanced_copy: 'Discover timepieces where Swiss heritage meets contemporary elegance',
-          handoff_logged: true,
-          log_id: 'handoff_2024_002'
-        }
-      },
-      {
-        id: 'd2-4',
-        title: 'Handoff Complete',
-        description: 'Muse returns enhanced copy to Echo. Full audit trail shows: source, target, time, reason',
-        highlight: 'handoff-complete',
-        action: 'show-handoff-audit',
-        data: {
-          source_agent: 'Echo',
-          target_agent: 'Muse',
-          handoff_time: '2024-01-15T14:32:00Z',
-          reason: 'Brand voice elevation needed',
-          result: 'Copy enhanced and returned',
-          total_duration: '3.2 seconds'
-        }
-      }
-    ]
-  }
+  
 ];
 
 // EPIC E - Operator UI
-export const epicE_Walkthroughs: UserStoryWalkthrough[] = [
-  {
+/* Removed Epic E (Operator UI) per product simplification */
+// export const epicE_Walkthroughs: UserStoryWalkthrough[] = [
+/*  {
     id: 'e1-see-five-agents',
     epic: 'Operator UI',
     story: 'As an Operator, I want to see all five agents and know which is active.',
     acceptance: 'Grid shows all five agents, active one emphasized, queue depth + timers visible',
     steps: [
+      {
+        id: 'e1-0',
+        title: 'Open Nucleus Side Panel',
+        description: 'Click the Nucleus extension icon to open the operator panel',
+        highlight: 'chrome-extension',
+        action: 'open-side-panel'
+      },
       {
         id: 'e1-1',
         title: 'Access Job History',
@@ -962,6 +948,13 @@ export const epicE_Walkthroughs: UserStoryWalkthrough[] = [
     acceptance: 'Edge animates in graph, event appears in timeline with latency + summary',
     steps: [
       {
+        id: 'e2-0',
+        title: 'Open Nucleus Side Panel',
+        description: 'Click the Nucleus extension icon to open the operator panel',
+        highlight: 'chrome-extension',
+        action: 'open-side-panel'
+      },
+      {
         id: 'e2-1',
         title: 'Collaboration Graph Active',
         description: 'Watch as Muse consults Scout. Animated edge appears between their nodes in the graph',
@@ -1023,6 +1016,13 @@ export const epicE_Walkthroughs: UserStoryWalkthrough[] = [
     acceptance: 'Thread updates within 1s, search returns top results in <300ms for 95% of searches',
     steps: [
       {
+        id: 'e3-0',
+        title: 'Open Nucleus Side Panel',
+        description: 'Click the Nucleus extension icon to open the operator panel',
+        highlight: 'chrome-extension',
+        action: 'open-side-panel'
+      },
+      {
         id: 'e3-1',
         title: 'Live Message Thread',
         description: 'You type "Make it more technical" and see your message appear instantly in the thread',
@@ -1076,18 +1076,26 @@ export const epicE_Walkthroughs: UserStoryWalkthrough[] = [
       }
     ]
   }
-];
+*/
+// ];
 
-// EPIC F - Security & Audit  
-export const epicF_Walkthroughs: UserStoryWalkthrough[] = [
+// EPIC E - Security & Audit  
+export const epicE_Walkthroughs: UserStoryWalkthrough[] = [
   {
-    id: 'f1-enforce-rls-rbac',
+    id: 'e1-enforce-rls-rbac',
     epic: 'Security & Audit',
     story: 'As an Admin, I need to guarantee that each client\'s data is isolated from others and that every action is tracked.',
     acceptance: 'Access denied for other client data, all actions logged with user/time/reason, searchable audit logs',
     steps: [
       {
-        id: 'f1-1',
+        id: 'e1-0',
+        title: 'Open Nucleus Side Panel',
+        description: 'Click the Nucleus extension icon to open the operator panel',
+        highlight: 'chrome-extension',
+        action: 'open-side-panel'
+      },
+      {
+        id: 'e1-1',
         title: 'Complex Request Arrives',
         description: 'HealthTech asks: "Need HIPAA-compliant copy for patient portal, plus ensure it\'s accessible (WCAG 2.1)"',
         highlight: 'message-input',
@@ -1099,7 +1107,7 @@ export const epicF_Walkthroughs: UserStoryWalkthrough[] = [
         }
       },
       {
-        id: 'f1-2',
+        id: 'e1-2',
         title: 'Attempt Cross-Client Access',
         description: 'Operator tries to access BioMed data via direct URL. System blocks: "Access Denied - Not authorized"',
         highlight: 'access-denied',
@@ -1110,40 +1118,6 @@ export const epicF_Walkthroughs: UserStoryWalkthrough[] = [
           error_code: 403,
           audit_logged: true,
           log_entry: 'Unauthorized access attempt by Sarah Chen'
-        }
-      },
-      {
-        id: 'f1-3',
-        title: 'All Actions Logged',
-        description: 'Every action logged: Login, job creation, agent routing, sync attempt. Full audit trail visible',
-        highlight: 'audit-log',
-        action: 'show-audit-trail',
-        data: {
-          recent_actions: [
-            '10:30:00 - Login by Sarah Chen',
-            '10:30:15 - Created job HT-2024-089',
-            '10:30:16 - Routed to Echo',
-            '10:31:45 - Attempted BioMed access (DENIED)',
-            '10:32:00 - Synced to ClickUp'
-          ],
-          retention: '7 years for compliance'
-        }
-      },
-      {
-        id: 'f1-4',
-        title: 'Admin Searches Audit',
-        description: 'Admin searches: "Who accessed HealthTech data yesterday?" Results show all operators and actions',
-        highlight: 'audit-search',
-        action: 'search-audit-logs',
-        data: {
-          search_query: 'client:HealthTech date:yesterday',
-          results: [
-            'Sarah Chen - 47 actions',
-            'Mike Johnson - 23 actions',
-            'Lisa Wong - 31 actions'
-          ],
-          filters: ['By user', 'By action type', 'By timestamp', 'By result'],
-          exportable: 'CSV, PDF for compliance reports'
         }
       }
     ]
@@ -1173,19 +1147,13 @@ export const walkthroughCategories = [
   {
     id: 'epic-d',
     name: 'Inter-Agent Collaboration',
-    description: 'Consult without transfer, delegate subtasks',
+    description: 'Consult without transfer',
     walkthroughs: epicD_Walkthroughs
   },
   {
     id: 'epic-e',
-    name: 'Operator UI',
-    description: 'See five agents, collaboration graph, conversation pane',
-    walkthroughs: epicE_Walkthroughs
-  },
-  {
-    id: 'epic-f',
     name: 'Security & Audit',
     description: 'Enforce RLS/RBAC, maintain audit trails',
-    walkthroughs: epicF_Walkthroughs
+    walkthroughs: epicE_Walkthroughs
   }
 ];

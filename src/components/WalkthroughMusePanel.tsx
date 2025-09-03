@@ -14,6 +14,8 @@ const WalkthroughMusePanel: React.FC<WalkthroughMusePanelProps> = ({
   const [showTaskDetails, setShowTaskDetails] = useState(false);
   const [showCollaboration, setShowCollaboration] = useState(true);
   const [inputMessage, setInputMessage] = useState('');
+  // Track the active agent selected by Traffic for C1 so we can glow/attribute output
+  const [activeAgent, setActiveAgent] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const agents = [
@@ -209,6 +211,156 @@ const WalkthroughMusePanel: React.FC<WalkthroughMusePanelProps> = ({
       });
     }
 
+    // C1: One example per step so each click shows a single agent glow
+    if (currentStep.action === 'show-agent-example' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: currentStep.data.agent,
+        content: currentStep.data.content
+      });
+    }
+
+    // Epic C: Traffic & Policies — routing, load, and system status
+    // Epic C1: do not render panel messages; explainer handles the narrative
+    if (currentStep.id?.startsWith('c1-')) {
+      // Skip C1 panel messages entirely
+    } else if (currentStep.action === 'create-job-panel' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: 'Muse',
+        content: `Opening job panel — "${currentStep.data.job || 'New job'}". Team: ${(currentStep.data.agents_working || []).join(', ')}`
+      });
+    }
+
+    if (!currentStep.id?.startsWith('c1-') && currentStep.action === 'show-routing-decision' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: 'Traffic',
+        content: `Decision logged — Policy: ${currentStep.data.policy_used}. Reason: ${currentStep.data.reason}. Routed to: ${currentStep.data.primary_agent}${currentStep.data.secondary_agent ? ` (backup: ${currentStep.data.secondary_agent})` : ''}.`
+      });
+      if (currentStep.data.primary_agent) {
+        setActiveAgent(currentStep.data.primary_agent);
+      }
+    }
+
+    if (!currentStep.id?.startsWith('c1-') && currentStep.action === 'show-completion' && currentStep.data) {
+      const agentName = activeAgent || 'System';
+      newMessages.push({
+        id: Date.now(),
+        agent: agentName,
+        content: currentStep.data.notification ? `${currentStep.data.notification} Deliverables ready: ${currentStep.data.deliverables_ready ? 'Yes' : 'No'}` : `Job complete. Deliverables ready: ${currentStep.data.deliverables_ready ? 'Yes' : 'No'}`
+      });
+    }
+
+    if (currentStep.action === 'show-high-load' && currentStep.data) {
+      const count = currentStep.data.concurrent_requests;
+      const who = currentStep.data.client || 'this client';
+      newMessages.push({
+        id: Date.now(),
+        agent: 'Traffic',
+        content: `Heads up: ${count} jobs landed for ${who} at once. We’ll keep things stable — routing, concurrency limits, and budgets are active.`
+      });
+    }
+
+    if (currentStep.action === 'show-capacity-limit' && currentStep.data) {
+      const a = currentStep.data.agent;
+      const max = currentStep.data.max_concurrent;
+      const pos = currentStep.data.queue_position;
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: `Paused: ${a} is at capacity (${max}/${max}). I’ve queued this job at #${pos} and will start it as soon as a slot frees up.`
+      });
+    }
+
+    if (currentStep.action === 'show-budget-exceeded' && currentStep.data) {
+      const kind = (currentStep.data.limit_type || '').replace('_', ' ');
+      const action = currentStep.data.operator_action_required || 'Please review and adjust.';
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: `Paused: This job hit its ${kind || 'budget'}. ${action}`
+      });
+    }
+
+    if (currentStep.action === 'show-system-status' && currentStep.data) {
+      const q = currentStep.data.queue_status ? `Status: you’re ${currentStep.data.queue_status}. ` : '';
+      const avail = Object.entries(currentStep.data.agent_availability || {}).map(([k,v]) => `${k} ${v}`).join(', ');
+      newMessages.push({
+        id: Date.now(),
+        agent: 'Traffic',
+        content: `${q}Current capacity — ${avail}. These limits keep things stable and predictable.`
+      });
+    }
+
+    // Epic E (Security & Audit): Access denial and audit visibility
+    if (currentStep.action === 'show-access-denial' && currentStep.data) {
+      const target = currentStep.data.attempted_access || 'restricted data';
+      const code = currentStep.data.error_code || 403;
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: `Access denied — Not authorized to view ${target}. Request blocked (${code}). This attempt has been logged.`
+      });
+    }
+
+    if (currentStep.action === 'show-audit-trail' && currentStep.data) {
+      const lines = (currentStep.data.recent_actions || []).slice(0, 5).join('\n');
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: lines ? `Audit log updated:\n${lines}` : 'Audit log updated.'
+      });
+    }
+
+    if (currentStep.action === 'search-audit-logs' && currentStep.data) {
+      const q = currentStep.data.search_query || 'recent activity';
+      const results = (currentStep.data.results || []).slice(0, 3).join('\n');
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: results ? `Search: “${q}”\nTop results:\n${results}` : `Search: “${q}” — no results.`
+      });
+    }
+
+    // Epic D1: Consult without transfer
+    if (currentStep.action === 'show-consult-need' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: currentStep.data.requesting_agent || 'Muse',
+        content: `Need help: ${currentStep.data.need}. Keeping ownership while I consult.`
+      });
+    }
+
+    if (currentStep.action === 'send-consult' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: currentStep.data.from || 'Muse',
+        content: `@${currentStep.data.to || 'Scout'} ${currentStep.data.query}`
+      });
+    }
+
+    if (currentStep.action === 'show-consult-response' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: (currentStep.data.event?.split(' → ')?.[1]?.split(' ')?.[0]) || 'Scout',
+        content: currentStep.data.response || 'Response received.'
+      });
+    }
+
+    if (currentStep.action === 'show-chain-limit' && currentStep.data) {
+      // Suppress this message for D1 per request; keep elsewhere if used
+      if (!(currentStep.id && currentStep.id.startsWith('d1-'))) {
+        newMessages.push({
+          id: Date.now(),
+          agent: 'System',
+          content: `Max consult chain depth reached (depth ${currentStep.data.depth}/${currentStep.data.max_depth}). Further consults blocked.`
+        });
+      }
+    }
+
+    // Epic D2 removed (single-owner model with Traffic Cop routing)
+
     if (currentStep.action === 'show-muse-ideas' && currentStep.data) {
       newMessages.push({
         id: Date.now(),
@@ -225,9 +377,84 @@ const WalkthroughMusePanel: React.FC<WalkthroughMusePanelProps> = ({
       });
     }
 
+    // Epic B: Conversations & Memory actions → thread messages
+    if (currentStep.action === 'show-message-live' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: `📨 Message #${currentStep.data.sequence_number} delivered in ${currentStep.data.latency || '—'}`
+      });
+    }
+
+    if (currentStep.action === 'show-agent-response' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: currentStep.data.agent || 'Muse',
+        content: currentStep.data.message || 'Responded'
+      });
+    }
+
+    if (currentStep.action === 'show-duplicate-rejection' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: `⛔ ${currentStep.data.rejection_reason}\nOriginal: ${currentStep.data.original_message_id}`
+      });
+    }
+
+    if (currentStep.action === 'show-conversation-history' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: 'System',
+        content: `📚 Loaded conversation history for ${currentStep.data.client || 'client'}\nPrevious messages: ${currentStep.data.previous_messages || 0}\nLast activity: ${currentStep.data.last_activity || '—'}`
+      });
+    }
+
+    if (currentStep.action === 'show-context-handoff' && currentStep.data) {
+      const persona = currentStep.data.persona || 'copywriter';
+      const pinned = currentStep.data.pinned_memory || 'brand tone and preferences';
+      const loaded = currentStep.data.messages_loaded ?? 'recent';
+      const handoff = currentStep.data.handoff_time || 'just now';
+      newMessages.push({
+        id: Date.now(),
+        agent: currentStep.data.agent || 'Echo',
+        content: `Great — I’ve loaded your context. I’ll take the role of ${persona}.\nI’ve pinned: “${pinned}.”\nPulled the last ${loaded} messages (${handoff}).\n\nWould you like me to draft the next section, tighten the latest update, or summarize key decisions to move us forward?`
+      });
+    }
+
+    // Replace recall with a conversational, action-oriented Echo message
+    if (currentStep.action === 'show-agent-recall' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: currentStep.data.agent || 'Echo',
+        content: `Picking up from our last discussion — I’ve got the context loaded and we’re aligned. I can: \n\n• Draft the next section\n• Tighten the latest update for clarity\n• Outline next steps and risks\n\nWhich should I do first?`
+      });
+    }
+
+    // Note: For Epic B2, omit the efficiency system message to avoid gear icon
+
+    // B3: Omit separate threshold notice; combine into a single friendly message below
+
+    if (currentStep.action === 'show-auto-summarize' && currentStep.data) {
+      newMessages.push({
+        id: Date.now(),
+        agent: 'Muse',
+        content: `This thread is getting long — I’ve summerized what we are doing to keep me focused. Want me to keep working on the next steps?`
+      });
+    }
+
+    // B3: No extra message for pinned memory
+
+    // B3: No UI preview message; keep the flow simple
+
+    // For Epic C2, force all messages to appear as System (gear icon)
+    const messagesToAdd = currentStep.id?.startsWith('c2-')
+      ? newMessages.map(m => ({ ...m, agent: 'System' }))
+      : newMessages;
+
     // Add the new messages
-    if (newMessages.length > 0) {
-      setMessages(prev => [...prev, ...newMessages]);
+    if (messagesToAdd.length > 0) {
+      setMessages(prev => [...prev, ...messagesToAdd]);
     }
   }, [currentStep]);
 

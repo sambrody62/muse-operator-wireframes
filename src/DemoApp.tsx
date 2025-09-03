@@ -15,6 +15,8 @@ function DemoApp() {
   const [showExplainer, setShowExplainer] = useState(true);
   const [showEndOverlay, setShowEndOverlay] = useState(false);
   const [showKnowledgeFactory, setShowKnowledgeFactory] = useState(false);
+  const [navNextTick, setNavNextTick] = useState(0);
+  const [navPrevTick, setNavPrevTick] = useState(0);
 
   const handleExtensionClick = () => {
     setIsMuseVisible(!isMuseVisible);
@@ -74,6 +76,9 @@ function DemoApp() {
           onSceneChange={handleSceneChange}
           speechComplete={false}
           onSpeechHandled={() => {}}
+          requestNext={navNextTick}
+          requestPrev={navPrevTick}
+          autoAdvance={false}
         />
       </div>
 
@@ -86,6 +91,8 @@ function DemoApp() {
           totalSteps={demoScript.length}
           isVisible={showExplainer && isMuseVisible}
           onClose={() => setShowExplainer(false)}
+          onNext={() => setNavNextTick(t => t + 1)}
+          onPrev={() => setNavPrevTick(t => t + 1)}
         />
       )}
       

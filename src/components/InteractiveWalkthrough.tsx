@@ -16,9 +16,11 @@ const InteractiveWalkthrough: React.FC<InteractiveWalkthroughProps> = ({
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isMuseVisible, setIsMuseVisible] = useState(false);
   const [clickUpUpdates, setClickUpUpdates] = useState<any[]>([]);
-  const [highlightElement, setHighlightElement] = useState<string>('');
+  // Highlight overlays/arrows removed per simplified UX
   
   const currentStep = walkthrough.steps[currentStepIndex];
+
+  // Panel visibility is controlled by walkthrough steps (e.g., 'open-muse').
 
   // Apply step actions
   useEffect(() => {
@@ -149,12 +151,7 @@ const InteractiveWalkthrough: React.FC<InteractiveWalkthroughProps> = ({
         break;
     }
 
-    // Set highlight element
-    if (currentStep.highlight) {
-      setHighlightElement(currentStep.highlight);
-    } else {
-      setHighlightElement('');
-    }
+    // No highlight element handling
   }, [currentStep]);
 
   const nextStep = () => {
@@ -195,23 +192,7 @@ const InteractiveWalkthrough: React.FC<InteractiveWalkthroughProps> = ({
         </div>
       )}
 
-      {/* Highlight Overlay */}
-      {highlightElement && (
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="relative w-full h-full">
-            {/* Dimmed background */}
-            <div className="absolute inset-0 bg-black/30" />
-            
-            {/* Highlighted area (would be dynamically positioned based on element) */}
-            <div 
-              className="absolute bg-transparent border-4 border-yellow-400 rounded-lg animate-pulse"
-              style={getHighlightStyle(highlightElement)}
-            >
-              <div className="absolute -top-2 -left-2 -right-2 -bottom-2 border-2 border-yellow-300 rounded-lg" />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Highlight overlay removed */}
 
       {/* Step Information Bubble */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
@@ -238,195 +219,74 @@ const InteractiveWalkthrough: React.FC<InteractiveWalkthroughProps> = ({
         </div>
       </div>
 
-      {/* Navigation Arrows */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="flex items-center space-x-4">
-          {/* Previous Arrow */}
-          <button
-            onClick={prevStep}
-            disabled={currentStepIndex === 0}
-            className={`group flex items-center justify-center w-16 h-16 rounded-full transition-all ${
-              currentStepIndex === 0 
-                ? 'bg-gray-300 cursor-not-allowed opacity-50' 
-                : 'bg-white hover:bg-blue-50 shadow-lg hover:shadow-xl cursor-pointer'
-            } border-2 border-gray-800`}
-          >
-            <ChevronLeft className={`w-8 h-8 ${
-              currentStepIndex === 0 ? 'text-gray-500' : 'text-gray-800 group-hover:text-blue-600'
-            }`} />
-          </button>
-
-          {/* Step Indicator */}
-          <div className="bg-white px-6 py-3 rounded-full shadow-lg border-2 border-gray-800">
-            <div className="flex items-center space-x-2">
-              {walkthrough.steps.map((_, index) => (
-                <div
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentStepIndex 
-                      ? 'w-8 bg-blue-600' 
-                      : index < currentStepIndex
-                      ? 'bg-blue-400'
-                      : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
+      {/* Bottom Controls: Epic details with in-box blue arrows and progress */}
+      <div className="absolute bottom-4 left-4 z-50">
+        <div className="bg-blue-50 rounded-xl border border-blue-200 shadow-lg p-4 max-w-xl">
+          <div className="text-xs font-semibold text-blue-700">{walkthrough.epic}</div>
+          <div className="text-sm font-medium text-slate-800 mt-0.5">{walkthrough.story}</div>
+          <div className="text-xs text-slate-600 mt-2">
+            <span className="font-semibold">Acceptance:</span> {walkthrough.acceptance}
           </div>
 
-          {/* Next Arrow */}
-          <button
-            onClick={nextStep}
-            disabled={currentStepIndex === walkthrough.steps.length - 1}
-            className={`group flex items-center justify-center w-16 h-16 rounded-full transition-all ${
-              currentStepIndex === walkthrough.steps.length - 1
-                ? 'bg-gray-300 cursor-not-allowed opacity-50' 
-                : 'bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl cursor-pointer animate-pulse'
-            } border-2 border-gray-800`}
-          >
-            <ChevronRight className={`w-8 h-8 text-white ${
-              currentStepIndex === walkthrough.steps.length - 1 ? '' : 'group-hover:translate-x-1'
-            } transition-transform`} />
-          </button>
-        </div>
-      </div>
+          <div className="mt-3 flex items-center justify-between">
+            {/* Previous Arrow (blue) */}
+            <button
+              onClick={prevStep}
+              disabled={currentStepIndex === 0}
+              className={`group flex items-center justify-center w-12 h-12 rounded-full transition-all ${
+                currentStepIndex === 0 
+                  ? 'bg-blue-300 cursor-not-allowed opacity-60' 
+                  : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg cursor-pointer'
+              } border-2 border-blue-800`}
+              aria-label="Previous step"
+            >
+              <ChevronLeft className={`w-6 h-6 text-white ${
+                currentStepIndex === 0 ? '' : 'group-hover:-translate-x-0.5'
+              } transition-transform`} />
+            </button>
 
-      {/* Pointer Arrow (if step has pointer coordinates) */}
-      {currentStep?.pointer && (
-        <div 
-          className="absolute z-40"
-          style={{
-            left: `${currentStep.pointer.x}%`,
-            top: `${currentStep.pointer.y}%`,
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          <div className="relative">
-            {/* Animated circle */}
-            <div className="absolute w-12 h-12 bg-yellow-400 rounded-full animate-ping opacity-75" />
-            
-            {/* Arrow pointing to element */}
-            <svg className="w-24 h-24 -mt-12 -ml-12" viewBox="0 0 100 100">
-              <defs>
-                <marker
-                  id="arrowhead"
-                  markerWidth="10"
-                  markerHeight="7"
-                  refX="9"
-                  refY="3.5"
-                  orient="auto"
-                >
-                  <polygon
-                    points="0 0, 10 3.5, 0 7"
-                    fill="#FBBF24"
+            {/* Step Indicator (dots) */}
+            <div className="bg-white/90 px-4 py-2 rounded-full shadow border border-blue-200">
+              <div className="flex items-center space-x-1">
+                {walkthrough.steps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`h-2 rounded-full transition-all ${
+                      index === currentStepIndex 
+                        ? 'w-6 bg-blue-600' 
+                        : index < currentStepIndex
+                        ? 'w-2 bg-blue-400'
+                        : 'w-2 bg-gray-300'
+                    }`}
                   />
-                </marker>
-              </defs>
-              <line
-                x1="20"
-                y1="20"
-                x2="50"
-                y2="50"
-                stroke="#FBBF24"
-                strokeWidth="3"
-                markerEnd="url(#arrowhead)"
-                className="animate-pulse"
-              />
-            </svg>
-            
-            {/* Label */}
-            <div className="absolute top-0 left-0 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">
-              Look here!
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Story Context Bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="font-bold">{walkthrough.epic}</h4>
-              <p className="text-sm opacity-90">{walkthrough.story}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs opacity-75">Acceptance Criteria:</p>
-              <p className="text-xs max-w-md">{walkthrough.acceptance}</p>
-            </div>
+            {/* Next Arrow (blue) */}
+            <button
+              onClick={nextStep}
+              disabled={currentStepIndex === walkthrough.steps.length - 1}
+              className={`group flex items-center justify-center w-12 h-12 rounded-full transition-all ${
+                currentStepIndex === walkthrough.steps.length - 1
+                  ? 'bg-blue-300 cursor-not-allowed opacity-60' 
+                  : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg cursor-pointer'
+              } border-2 border-blue-800`}
+              aria-label="Next step"
+            >
+              <ChevronRight className={`w-6 h-6 text-white ${
+                currentStepIndex === walkthrough.steps.length - 1 ? '' : 'group-hover:translate-x-0.5'
+              } transition-transform`} />
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Pointer arrow removed */}
+
+      {/* Removed full-width story context bar */}
     </div>
   );
 };
-
-// Helper function to get highlight styles based on element ID
-function getHighlightStyle(elementId: string): React.CSSProperties {
-  const styles: { [key: string]: React.CSSProperties } = {
-    'chrome-extension': {
-      top: '10px',
-      right: '10px',
-      width: '60px',
-      height: '60px'
-    },
-    'clickup-page': {
-      top: '80px',
-      left: '20px',
-      right: '420px',
-      bottom: '100px'
-    },
-    'muse-header': {
-      top: '10px',
-      right: '420px',
-      width: '300px',
-      height: '80px'
-    },
-    'context-bar': {
-      top: '100px',
-      right: '420px',
-      width: '350px',
-      height: '60px'
-    },
-    'agent-echo': {
-      top: '200px',
-      right: '50px',
-      width: '320px',
-      height: '120px'
-    },
-    'sync-button': {
-      top: '350px',
-      right: '100px',
-      width: '200px',
-      height: '50px'
-    },
-    'sync-status': {
-      top: '420px',
-      right: '50px',
-      width: '320px',
-      height: '80px'
-    },
-    'message-input': {
-      bottom: '120px',
-      right: '50px',
-      width: '320px',
-      height: '60px'
-    },
-    'agent-grid': {
-      top: '150px',
-      right: '50px',
-      width: '320px',
-      height: '400px'
-    }
-  };
-
-  return styles[elementId] || {
-    top: '50%',
-    left: '50%',
-    width: '200px',
-    height: '100px',
-    transform: 'translate(-50%, -50%)'
-  };
-}
 
 export default InteractiveWalkthrough;

@@ -8,9 +8,12 @@ interface DemoMuseOperatorUIProps {
   isVisible: boolean;
   speechComplete?: boolean;
   onSpeechHandled?: () => void;
+  requestNext?: number; // bump to request next scene
+  requestPrev?: number; // bump to request previous scene
+  autoAdvance?: boolean; // if true, advance when voiceover completes
 }
 
-const DemoMuseOperatorUI: React.FC<DemoMuseOperatorUIProps> = ({ onClickUpUpdate, onSceneChange, isVisible, speechComplete, onSpeechHandled }) => {
+const DemoMuseOperatorUI: React.FC<DemoMuseOperatorUIProps> = ({ onClickUpUpdate, onSceneChange, isVisible, speechComplete, onSpeechHandled, requestNext, requestPrev, autoAdvance }) => {
   const [showTaskDetails, setShowTaskDetails] = useState(false);
   const [showCollaboration, setShowCollaboration] = useState(true);
   const [messages, setMessages] = useState<any[]>([]);
@@ -55,6 +58,7 @@ const DemoMuseOperatorUI: React.FC<DemoMuseOperatorUIProps> = ({ onClickUpUpdate
 
   // Advance to next scene when speech is complete
   useEffect(() => {
+    if (!autoAdvance) return;
     if (speechComplete && isPlaying) {
       const currentScene = demoScript[currentSceneIndex];
       // Check if we've shown all messages in the current scene
@@ -79,7 +83,7 @@ const DemoMuseOperatorUI: React.FC<DemoMuseOperatorUIProps> = ({ onClickUpUpdate
         }
       }
     }
-  }, [speechComplete, isPlaying, currentSceneIndex, currentMessageIndex, onSpeechHandled]);
+  }, [speechComplete, isPlaying, currentSceneIndex, currentMessageIndex, onSpeechHandled, autoAdvance]);
 
   // Process demo messages
   useEffect(() => {
@@ -201,6 +205,31 @@ const DemoMuseOperatorUI: React.FC<DemoMuseOperatorUIProps> = ({ onClickUpUpdate
       if (!isPlaying) setIsPlaying(true);
     }
   };
+
+  const skipToPrevScene = () => {
+    if (currentSceneIndex > 0) {
+      setTalkingAgent(null);
+      setCurrentSceneIndex(prev => prev - 1);
+      setCurrentMessageIndex(0);
+      if (!isPlaying) setIsPlaying(true);
+    }
+  };
+
+  // Respond to external navigation requests from parent (explainer arrows)
+  const prevNextRef = useRef({ next: 0, prev: 0 });
+  useEffect(() => {
+    if (requestNext !== undefined && requestNext !== prevNextRef.current.next) {
+      prevNextRef.current.next = requestNext;
+      skipToNextScene();
+    }
+  }, [requestNext]);
+
+  useEffect(() => {
+    if (requestPrev !== undefined && requestPrev !== prevNextRef.current.prev) {
+      prevNextRef.current.prev = requestPrev;
+      skipToPrevScene();
+    }
+  }, [requestPrev]);
 
 
   const highlightClickUpField = (fieldId: string) => {

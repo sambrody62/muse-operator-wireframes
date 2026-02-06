@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './App.css';
 import ChromeExtensionButton from './ChromeExtensionButton';
 import DemoClickUpPage from './DemoClickUpPage';
@@ -26,16 +26,25 @@ function DemoApp() {
   const [speechComplete, setSpeechComplete] = useState(false);
   const [narrationEnabled, setNarrationEnabled] = useState(true);
 
+  // Track which scene we last narrated to prevent duplicates
+  const lastNarratedSceneRef = useRef<number>(-1);
+
   // Initialize TTS hook
   const { speak, stop, isPlaying, isLoading } = useTextToSpeech(
     ELEVENLABS_API_KEY,
     () => setSpeechComplete(true) // Called when speech ends
   );
 
-  // Speak narration when scene changes
-  const speakSceneNarration = useCallback((sceneIndex: number) => {
+  // Speak narration for a scene (only if not already narrated)
+  const speakSceneNarration = useCallback((sceneIndex: number, force: boolean = false) => {
+    // Skip if we already narrated this scene (unless forced)
+    if (!force && lastNarratedSceneRef.current === sceneIndex) {
+      return;
+    }
+
     const scene = demoScript[sceneIndex];
     if (scene?.explainer?.description && narrationEnabled) {
+      lastNarratedSceneRef.current = sceneIndex;
       setSpeechComplete(false);
       speak(scene.explainer.description, {
         voiceId: ELEVENLABS_VOICE_ID,
@@ -44,9 +53,9 @@ function DemoApp() {
     }
   }, [speak, narrationEnabled]);
 
-  // Speak narration when Muse panel becomes visible (first scene)
+  // Speak narration when Muse panel becomes visible (first scene only on initial open)
   useEffect(() => {
-    if (isMuseVisible && currentSceneIndex === 0) {
+    if (isMuseVisible && currentSceneIndex === 0 && lastNarratedSceneRef.current === -1) {
       // Small delay to let the panel animation complete
       const timer = setTimeout(() => {
         speakSceneNarration(0);

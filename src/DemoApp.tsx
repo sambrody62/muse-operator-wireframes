@@ -28,6 +28,8 @@ function DemoApp() {
 
   // Track which scene we last narrated to prevent duplicates
   const lastNarratedSceneRef = useRef<number>(-1);
+  // Track if user has clicked the extension button (to prevent auto-play on page load)
+  const hasUserClickedRef = useRef<boolean>(false);
 
   // Initialize TTS hook
   const { speak, stop, isPlaying, isLoading } = useTextToSpeech(
@@ -37,6 +39,11 @@ function DemoApp() {
 
   // Speak narration for a scene (only if not already narrated)
   const speakSceneNarration = useCallback((sceneIndex: number, force: boolean = false) => {
+    // Skip if user hasn't clicked the button yet
+    if (!hasUserClickedRef.current) {
+      return;
+    }
+
     // Skip if we already narrated this scene (unless forced)
     if (!force && lastNarratedSceneRef.current === sceneIndex) {
       return;
@@ -55,7 +62,7 @@ function DemoApp() {
 
   // Speak narration when Muse panel becomes visible (first scene only on initial open)
   useEffect(() => {
-    if (isMuseVisible && currentSceneIndex === 0 && lastNarratedSceneRef.current === -1) {
+    if (isMuseVisible && currentSceneIndex === 0 && lastNarratedSceneRef.current === -1 && hasUserClickedRef.current) {
       // Small delay to let the panel animation complete
       const timer = setTimeout(() => {
         speakSceneNarration(0);
@@ -70,12 +77,24 @@ function DemoApp() {
   }, []);
 
   const handleExtensionClick = () => {
+    const wasVisible = isMuseVisible;
     setIsMuseVisible(!isMuseVisible);
-    if (!isMuseVisible) {
-      // Start showing explainer immediately when panel opens
+
+    if (!wasVisible) {
+      // Opening the panel
+      hasUserClickedRef.current = true;
       setShowExplainer(true);
+
+      // Start narration for first scene when button is clicked
+      if (currentSceneIndex === 0 && lastNarratedSceneRef.current === -1) {
+        setTimeout(() => {
+          speakSceneNarration(0);
+        }, 500);
+      }
     } else {
+      // Closing the panel
       setShowExplainer(false);
+      stop(); // Stop any playing narration
     }
   };
 

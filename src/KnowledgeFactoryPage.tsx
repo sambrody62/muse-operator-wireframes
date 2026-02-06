@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ArrowLeft } from 'lucide-react';
 import { knowledgeFactoryScript } from './KnowledgeFactoryScript';
+import { useBackgroundMusic } from './hooks/useBackgroundMusic';
 
 /**
  * Demo-ready React component you can run directly in a React + Tailwind project.
@@ -48,6 +49,22 @@ export default function KnowledgeFactoryPage({
   const [stepIndex, setStepIndex] = useState(0);
   const [showWalk, setShowWalk] = useState(true);
   const autoAdvanceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Space ambient background music
+  const { play: playMusic, stop: stopMusic, isPlaying: isMusicPlaying } = useBackgroundMusic('/audio/space-ai-music.mp3');
+
+  // Start music when component mounts
+  useEffect(() => {
+    // Small delay to ensure user interaction has happened (from clicking "Learn More")
+    const timer = setTimeout(() => {
+      playMusic();
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      stopMusic();
+    };
+  }, [playMusic, stopMusic]);
 
   // Auto-advance to next step after a delay
   useEffect(() => {

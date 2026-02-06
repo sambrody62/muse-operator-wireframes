@@ -13,7 +13,7 @@ export interface TTSOptions {
 }
 
 // Default ElevenLabs settings
-const DEFAULT_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah - warm, engaging narrator voice
+const DEFAULT_VOICE_ID = 'XwswTF89pZKbWpVX4A7R'; // Custom voice
 const DEFAULT_MODEL = 'eleven_turbo_v2_5'; // Fast, high-quality model
 const DEFAULT_VOICE_SETTINGS = {
   stability: 0.5,
